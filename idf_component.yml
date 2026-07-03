@@ -1,0 +1,10 @@
+name: esp-swift-mcpwm
+version: "0.1.0"
+description: "ESP-IDF MCPWM motor driver for Swift — DC motor over H-bridge"
+url: "https://github.com/nixit22/esp-swift-mcpwm"
+dependencies:
+  idf: ">=5.5"
+  esp-swift-platform:
+    git: "https://github.com/nixit22/esp-swift-platform.git"
+  esp-swift-support:
+    git: "https://github.com/nixit22/esp-swift-support.git"
