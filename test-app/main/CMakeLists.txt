@@ -25,7 +25,7 @@ idf_component_register(
         "main.swift"
         "TestMCPWM.swift"
     INCLUDE_DIRS "."
-    REQUIRES esp-swift-mcpwm esp-swift-gpio esp-swift-platform esp-swift-support
+    REQUIRES esp-swift-mcpwm esp-swift-gpio
 )
 
 swift_configure(
