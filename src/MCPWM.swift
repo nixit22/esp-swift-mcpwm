@@ -63,27 +63,27 @@ public struct McpwmTimer: ~Copyable {
         _ = mcpwm_del_timer(handle)
     }
 
-    public func enable() throws(Error) {
+    public func enable() throws(PlatformError) {
         try mcpwm_timer_enable(handle)
             .throwEspError { log.e("Failed to enable MCPWM timer: \($0.name)") }
     }
 
-    public func disable() throws(Error) {
+    public func disable() throws(PlatformError) {
         try mcpwm_timer_disable(handle)
             .throwEspError { log.e("Failed to disable MCPWM timer: \($0.name)") }
     }
 
-    public func startStop(_ cmd: mcpwm_timer_start_stop_cmd_t) throws(Error) {
+    public func startStop(_ cmd: mcpwm_timer_start_stop_cmd_t) throws(PlatformError) {
         try mcpwm_timer_start_stop(handle, cmd)
             .throwEspError { log.e("Failed to start/stop MCPWM timer: \($0.name)") }
     }
 
-    public func setPeriod(_ periodTicks: UInt32) throws(Error) {
+    public func setPeriod(_ periodTicks: UInt32) throws(PlatformError) {
         try mcpwm_timer_set_period(handle, periodTicks)
             .throwEspError { log.e("Failed to set MCPWM timer period: \($0.name)") }
     }
 
-    public func newOperator() throws(Error) -> McpwmOperator {
+    public func newOperator() throws(PlatformError) -> McpwmOperator {
         var cfg = mcpwm_operator_config_t(
             group_id: groupId,
             intr_priority: 0,
@@ -96,7 +96,7 @@ public struct McpwmTimer: ~Copyable {
             .throwEspError { log.e("Failed to create MCPWM operator: \($0.name)") }
         guard let h else {
             log.e("MCPWM operator handle is nil")
-            throw Error.espError(ESP_FAIL)
+            throw PlatformError.espError(ESP_FAIL)
         }
         let connectErr = mcpwm_operator_connect_timer(h, handle)
         if connectErr != ESP_OK {
@@ -104,7 +104,7 @@ public struct McpwmTimer: ~Copyable {
             // The operator handle was still allocated by mcpwm_new_operator above and would
             // otherwise leak since it's never wrapped in a McpwmOperator on this failure path.
             _ = mcpwm_del_operator(h)
-            throw Error.espError(connectErr)
+            throw PlatformError.espError(connectErr)
         }
         return McpwmOperator(handle: h)
     }
@@ -122,7 +122,7 @@ public struct McpwmOperator: ~Copyable {
         _ = mcpwm_del_operator(handle)
     }
 
-    public func newComparator() throws(Error) -> McpwmComparator {
+    public func newComparator() throws(PlatformError) -> McpwmComparator {
         var cfg = mcpwm_comparator_config_t(
             intr_priority: 0,
             flags: .init(update_cmp_on_tez: 1, update_cmp_on_tep: 0, update_cmp_on_sync: 0))
@@ -131,12 +131,12 @@ public struct McpwmOperator: ~Copyable {
             .throwEspError { log.e("Failed to create MCPWM comparator: \($0.name)") }
         guard let h else {
             log.e("MCPWM comparator handle is nil")
-            throw Error.espError(ESP_FAIL)
+            throw PlatformError.espError(ESP_FAIL)
         }
         return McpwmComparator(handle: h)
     }
 
-    public func newGenerator(gpioNum: gpio_num_t, invertPwm: Bool = false) throws(Error) -> McpwmGenerator {
+    public func newGenerator(gpioNum: gpio_num_t, invertPwm: Bool = false) throws(PlatformError) -> McpwmGenerator {
         var cfg = mcpwm_generator_config_t(
             gen_gpio_num: Int32(gpioNum.rawValue),
             flags: .init(
@@ -147,7 +147,7 @@ public struct McpwmOperator: ~Copyable {
             .throwEspError { log.e("Failed to create MCPWM generator: \($0.name)") }
         guard let h else {
             log.e("MCPWM generator handle is nil")
-            throw Error.espError(ESP_FAIL)
+            throw PlatformError.espError(ESP_FAIL)
         }
         return McpwmGenerator(handle: h)
     }
@@ -165,7 +165,7 @@ public struct McpwmComparator: ~Copyable {
         _ = mcpwm_del_comparator(handle)
     }
 
-    public func setCompareValue(_ ticks: UInt32) throws(Error) {
+    public func setCompareValue(_ ticks: UInt32) throws(PlatformError) {
         try mcpwm_comparator_set_compare_value(handle, ticks)
             .throwEspError { log.e("Failed to set MCPWM compare value: \($0.name)") }
     }
@@ -187,7 +187,7 @@ public struct McpwmGenerator: ~Copyable {
         direction: mcpwm_timer_direction_t,
         event: mcpwm_timer_event_t,
         action: mcpwm_generator_action_t
-    ) throws(Error) {
+    ) throws(PlatformError) {
         try mcpwm_generator_set_action_on_timer_event(
             handle,
             mcpwm_gen_timer_event_action_t(direction: direction, event: event, action: action)
@@ -198,7 +198,7 @@ public struct McpwmGenerator: ~Copyable {
         direction: mcpwm_timer_direction_t,
         comparator: borrowing McpwmComparator,
         action: mcpwm_generator_action_t
-    ) throws(Error) {
+    ) throws(PlatformError) {
         try mcpwm_generator_set_action_on_compare_event(
             handle,
             mcpwm_gen_compare_event_action_t(
@@ -208,7 +208,7 @@ public struct McpwmGenerator: ~Copyable {
 
     /// Set or release a forced output level.
     /// - Parameter level: 0 = force low, 1 = force high, -1 = release (resume PWM action).
-    public func setForceLevel(_ level: Int32, holdOn: Bool = true) throws(Error) {
+    public func setForceLevel(_ level: Int32, holdOn: Bool = true) throws(PlatformError) {
         try mcpwm_generator_set_force_level(handle, level, holdOn)
             .throwEspError { log.e("Failed to set MCPWM generator force level: \($0.name)") }
     }
