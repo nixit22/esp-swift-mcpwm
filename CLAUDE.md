@@ -8,9 +8,9 @@ Depends on: `SwiftPlatform`, `SwiftSupport`, `esp_driver_mcpwm`
 
 | File | Role |
 |---|---|
-| `src/MCPWM.swift` | `McpwmTimer`, `McpwmOperator`, `McpwmComparator`, `McpwmGenerator` — public Swift API |
-| `src/mcpwm.c` / `src/mcpwm.h` | Thin C wrapper — only `#include <driver/mcpwm_prelude.h>` |
-| `module.modulemap` | Clang module `ESP_MCPWM` — umbrella over `src/mcpwm.h` |
+| `Sources/MCPWM/MCPWM.swift` | `McpwmTimer`, `McpwmOperator`, `McpwmComparator`, `McpwmGenerator` — public Swift API |
+| `Sources/ESP_MCPWM/mcpwm.c` / `Sources/ESP_MCPWM/include/ESP_MCPWM.h` | Thin C wrapper — only `#include <driver/mcpwm_prelude.h>` |
+| `Package.swift` | SwiftPM package: C target `ESP_MCPWM` (module map generated from `include/ESP_MCPWM.h`, the former `ESP_MCPWM.h`) and Swift target `MCPWM` |
 
 ## Public API
 

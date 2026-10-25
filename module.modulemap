@@ -1,4 +1,0 @@
-module ESP_MCPWM [system] {
-    umbrella header "src/mcpwm.h"
-    export *
-}
