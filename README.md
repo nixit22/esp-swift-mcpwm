@@ -12,7 +12,7 @@ app's `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/nixit22/esp-swift-mcpwm.git", branch: "SPM"),
+    .package(url: "https://github.com/nixit22/esp-swift-mcpwm.git", from: "0.1.0"),
 ],
 targets: [
     .target(name: "App", dependencies: [.product(name: "MCPWM", package: "esp-swift-mcpwm")]),
