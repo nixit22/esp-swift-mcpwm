@@ -139,9 +139,7 @@ public struct McpwmOperator: ~Copyable {
     public func newGenerator(gpioNum: gpio_num_t, invertPwm: Bool = false) throws(PlatformError) -> McpwmGenerator {
         var cfg = mcpwm_generator_config_t(
             gen_gpio_num: Int32(gpioNum.rawValue),
-            flags: .init(
-                invert_pwm: invertPwm ? 1 : 0,
-                io_loop_back: 0, io_od_mode: 0, pull_up: 0, pull_down: 0))
+            flags: .init(invert_pwm: invertPwm ? 1 : 0))
         var h: mcpwm_gen_handle_t? = nil
         try mcpwm_new_generator(handle, &cfg, &h)
             .throwEspError { log.e("Failed to create MCPWM generator: \($0.name)") }
